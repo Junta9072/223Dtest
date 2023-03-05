@@ -24,7 +24,11 @@ ballArray.sort(function(a,b){return a.y - b.y})
 
       let camX = 0;
       let camY = 0;
+
+      let angX = 0;
+      let angY = 0;
       let camSpeed = 5;
+      
       
       p.setup = () => {
         p.angleMode(p.DEGREES);
@@ -43,71 +47,42 @@ ballArray.sort(function(a,b){return a.y - b.y})
 
         p.angleMode(p.DEGREES);
         p.noStroke()
-        
-        p.translate(-p.width / 2,-p.height / 2)
+           
         p.fill('red')
-        p.ellipse(p.width / 2,p.height / 2,10,10)
-      
-        
-    
-        p.rotate(angle)
-        p.translate(camX,camY)
-
-
-        
-        //shadow trick example
-          //save canvas state
-          p.push();
-          //move origin to start of the line
-          p.translate(50,50)
-          //counteract rotation of the general canvas
-          p.rotate(-angle)
-          //draw line
-          p.stroke('red');
-          p.line(0,0,100,100);
-          //restore original canvas state
-        p.pop()
-        p.noStroke()
-
-        //z-sorting
+        p.ellipse(0,0,10,10)        
 
         ballArray.forEach((item,i) => {
-          item.rectY = p.sin(angle) * item.x + p.cos(angle) * item.y + p.height/2;
-        })
-        ballArray.sort(function(a,b) {return a.rectY-b.rectY})
-
-        ballArray.forEach((item,i) => {
-          p.push()
-          //draw shadow
-          p.fill('gray');
-        
-          p.translate(item.x,item.y);
-          p.rotate(-angle);
-          p.translate(p.width / 2 - camX, p.height / 2 - camY);
-
-          p.ellipse(0,0,item.r,item.r);
-        p.pop()
-        })
-
-        ballArray.forEach((item,i) => {
-          p.push()
-          //draw shadow
-         p.translate(item.x,item.y);
-          p.rotate(-angle);
-          p.translate(p.width / 2 - camX, p.height / 2 - camY);
           p.fill('#' + item.colour);
+          p.push()
+       
+          p.rotate(angle)
+          p.translate(item.x,item.y)
+
+          p.ellipse(-camX,-camY,item.r,item.r)
+          p.pop()
+        })
+
+        /*ballArray.forEach((item,i) => {
+          p.fill('#' + item.colour);
+          p.push();
+          p.translate(item.x, item.y);
+          p.rotate(-angle)
           p.ellipse(0,-item.z,item.r,item.r)
-        p.pop()
-        })  
+          p.pop()
+        })*/
         
         if (p.keyIsDown(p.LEFT_ARROW)) {
-    camX += camSpeed;
+    camX -= p.cos(angle) * camSpeed + p.sin(angle) * 0;
+    camY -= -p.sin(angle) * camSpeed + p.cos(angle) * 0;
   } else if (p.keyIsDown(p.RIGHT_ARROW)) {
-    camX -= camSpeed;
+    camX += p.cos(angle) * camSpeed + p.sin(angle) * 0;
+    camY += -p.sin(angle) * camSpeed + p.cos(angle) * 0;
   } else if (p.keyIsDown(p.UP_ARROW)) {
-    camY += camSpeed;
+    camY -= p.cos(angle) * camSpeed + -p.sin(angle) * 0;
+    camX -= p.sin(angle) * camSpeed + p.cos(angle) * 0;
   } else if (p.keyIsDown(p.DOWN_ARROW)) {
-    camY -= camSpeed;
+    camY += p.cos(angle) * camSpeed + -p.sin(angle) * 0;
+    camX += p.sin(angle) * camSpeed + p.cos(angle) * 0;
   }   
 
       }
