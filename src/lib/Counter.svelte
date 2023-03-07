@@ -4,6 +4,8 @@
   
   let sketch;
   let angle = 0;
+  let pitch = 0.5;
+
    let area = 400;
    let amount = 20;
 
@@ -20,6 +22,8 @@ ballArray.sort(function(a,b){return a.y - b.y})
     const sketchFunc = (p) => {
       // Your p5.js sketch code goes here
       let dragStartX;
+      let dragStartY;
+      let dragDistY;
       let isDragging = false;
 
       let camX = 0;
@@ -52,12 +56,27 @@ ballArray.sort(function(a,b){return a.y - b.y})
         p.ellipse(0,0,10,10)        
 
         ballArray.forEach((item,i) => {
+          p.fill('gray');
+          p.push()
+       
+          p.rotate(angle)
+          p.translate(item.x ,item.y )
+
+          p.ellipse(-camX,-camY,item.r,item.r)
+          p.pop()
+        })
+
+ 
+        console.log(1 - pitch)
+        ballArray.forEach((item,i) => {
           p.fill('#' + item.colour);
           p.push()
        
           p.rotate(angle)
           p.translate(item.x,item.y)
-
+          p.rotate(-angle)
+          p.translate(0,-item.z * pitch )
+          p.rotate(angle)
           p.ellipse(-camX,-camY,item.r,item.r)
           p.pop()
         })
@@ -89,6 +108,7 @@ ballArray.sort(function(a,b){return a.y - b.y})
 
 p.mousePressed = () => {
   dragStartX = p.mouseX;
+  dragStartY = p.mouseY;
   isDragging = true;
 }
 
@@ -99,8 +119,11 @@ p.mouseReleased = () => {
 p.mouseDragged = () => {
   if (isDragging) {
     let dragDistX = p.mouseX - dragStartX;
+    let dragDistY = p.mouseY - dragStartY;
     angle -= dragDistX;
+    pitch -= dragDistY / 100;
     dragStartX = p.mouseX;
+    dragStartY = p.mouseY;
   }
 }
     };
