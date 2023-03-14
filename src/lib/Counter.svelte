@@ -53,31 +53,71 @@ ballArray.sort(function(a,b){return a.y - b.y})
         p.noStroke()
            
         p.fill('red')
-        p.ellipse(0,0,10,10)        
+        p.ellipse(0,0,10,10)    
+        
+      //camera Yscale compression
+        let counterCamX = camX * p.cos(angle) - camY * p.sin(angle);
+        let counterCamY = camX * p.sin(angle) + camY * p.cos(angle);
+        //camera bijschalen
+        let scaleCamY = counterCamY * (1-pitch);
+        //camera coords terug draaien
+        let exitCam = {x: counterCamX * p.cos(angle) + scaleCamY * p.sin(angle), y:counterCamX * -p.sin(angle) + scaleCamY * p.cos(angle)}
+        
+        ballArray.forEach((item,i) => {
+          //item counter rotaten
+          item.counter = {x: item.x * p.cos(angle) - item.y * p.sin(angle), y: item.x * p.sin(angle) + item.y * p.cos(angle)}
+          //item.y scalen
+          item.scale = {y: item.counter.y * (1-pitch)};
+          //item terug rotaten
+           item.exit = {x: item.counter.x * p.cos(angle) + item.scale.y * p.sin(angle), y: item.counter.x * -p.sin(angle) + item.scale.y * p.cos(angle)};
+        })
+
+        ballArray.sort(function(a,b){return a.counter.y - b.counter.y})
 
         ballArray.forEach((item,i) => {
           p.fill('gray');
           p.push()
        
           p.rotate(angle)
-          p.translate(item.x ,item.y )
 
-          p.ellipse(-camX,-camY,item.r,item.r)
+          //item counter rotaten
+          let counterX = item.x * p.cos(angle) - item.y * p.sin(angle);
+          let counterY = item.x * p.sin(angle) + item.y * p.cos(angle);
+          //item.y scalen
+          let scaleY = counterY * (1-pitch);
+          //item terug rotaten
+          let exitX = counterX * p.cos(angle) + scaleY * p.sin(angle);
+          let exitY = counterX * -p.sin(angle) + scaleY * p.cos(angle);
+
+          p.translate(exitX ,exitY)
+          p.translate(-exitCam.x,-exitCam.y)
+          p.push()
+          p.rotate(-angle)
+          p.ellipse(0,0,item.r,item.r * (1-pitch))
+          p.pop()
           p.pop()
         })
-
  
-        console.log(1 - pitch)
         ballArray.forEach((item,i) => {
           p.fill('#' + item.colour);
           p.push()
        
           p.rotate(angle)
-          p.translate(item.x,item.y)
+
+          //item counter rotaten
+          let counterX = item.x * p.cos(angle) - item.y * p.sin(angle);
+          let counterY = item.x * p.sin(angle) + item.y * p.cos(angle);
+          //item.y scalen
+          let scaleY = counterY * (1-pitch);
+          //item terug rotaten
+          let exitX = counterX * p.cos(angle) + scaleY * p.sin(angle);
+          let exitY = counterX * -p.sin(angle) + scaleY * p.cos(angle);
+
+          p.translate(exitX,exitY)
           p.rotate(-angle)
           p.translate(0,-item.z * pitch )
           p.rotate(angle)
-          p.ellipse(-camX,-camY,item.r,item.r)
+          p.ellipse(-exitCam.x,-exitCam.y,item.r,item.r)
           p.pop()
         })
 
@@ -91,17 +131,17 @@ ballArray.sort(function(a,b){return a.y - b.y})
         })*/
         
         if (p.keyIsDown(p.LEFT_ARROW)) {
-    camX -= p.cos(angle) * camSpeed + p.sin(angle) * 0;
-    camY -= -p.sin(angle) * camSpeed + p.cos(angle) * 0;
+    camX -= p.cos(angle) * (camSpeed* (1- pitch)) + p.sin(angle) * 0;
+    camY -= -p.sin(angle) * (camSpeed* (1- pitch)) + p.cos(angle) * 0;
   } else if (p.keyIsDown(p.RIGHT_ARROW)) {
-    camX += p.cos(angle) * camSpeed + p.sin(angle) * 0;
-    camY += -p.sin(angle) * camSpeed + p.cos(angle) * 0;
+    camX += p.cos(angle) * (camSpeed* (1- pitch)) + p.sin(angle) * 0;
+    camY += -p.sin(angle) * (camSpeed* (1- pitch)) + p.cos(angle) * 0;
   } else if (p.keyIsDown(p.UP_ARROW)) {
-    camY -= p.cos(angle) * camSpeed + -p.sin(angle) * 0;
-    camX -= p.sin(angle) * camSpeed + p.cos(angle) * 0;
+    camY -= p.cos(angle) * (camSpeed* (1- pitch)) + -p.sin(angle) * 0;
+    camX -= p.sin(angle) * (camSpeed* (1- pitch)) + p.cos(angle) * 0;
   } else if (p.keyIsDown(p.DOWN_ARROW)) {
-    camY += p.cos(angle) * camSpeed + -p.sin(angle) * 0;
-    camX += p.sin(angle) * camSpeed + p.cos(angle) * 0;
+    camY += p.cos(angle) * (camSpeed* (1- pitch)) + -p.sin(angle) * 0;
+    camX += p.sin(angle) * (camSpeed* (1- pitch)) + p.cos(angle) * 0;
   }   
 
       }
